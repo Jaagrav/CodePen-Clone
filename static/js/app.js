@@ -5,7 +5,8 @@ window.onload = function () {
     let htmlEditor = ace.edit("html");
     htmlEditor.session.setMode("ace/mode/html");
     htmlEditor.setTheme("ace/theme/nord_dark");
-    htmlEditor.session.setValue(`<!DOCTYPE html>
+    if (localStorage.getItem("lc-codepen-clone-html") == null)
+        htmlEditor.session.setValue(`<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +17,7 @@ window.onload = function () {
     
 </body>
 </html>`);
+    else htmlEditor.session.setValue(localStorage.getItem("lc-codepen-clone-html"))
     htmlEditor.session.setUseWrapMode(true);
     htmlEditor.setShowPrintMargin(false);
     htmlEditor.setHighlightActiveLine(false);
@@ -27,9 +29,12 @@ window.onload = function () {
     let cssEditor = ace.edit("css");
     cssEditor.session.setMode("ace/mode/css");
     cssEditor.setTheme("ace/theme/nord_dark");
-    cssEditor.session.setValue(`body{
+
+    if (localStorage.getItem("lc-codepen-clone-css") == null)
+        cssEditor.session.setValue(`body{
         
     }`);
+    else cssEditor.session.setValue(localStorage.getItem("lc-codepen-clone-css"))
     cssEditor.session.setUseWrapMode(true);
     cssEditor.setShowPrintMargin(false);
     cssEditor.setHighlightActiveLine(false);
@@ -40,13 +45,17 @@ window.onload = function () {
     let jsEditor = ace.edit("javascript");
     jsEditor.session.setMode("ace/mode/javascript");
     jsEditor.setTheme("ace/theme/nord_dark");
-    jsEditor.session.setValue(`//JavaScript goes here`);
+    if (localStorage.getItem("lc-codepen-clone-js") == null)
+        jsEditor.session.setValue(`//JavaScript goes here`);
+    else
+        jsEditor.session.setValue(localStorage.getItem("lc-codepen-clone-js"))
     jsEditor.session.setUseWrapMode(true);
     jsEditor.setShowPrintMargin(false);
     jsEditor.setHighlightActiveLine(false);
     jsEditor.session.on('change', function (delta) {
         update();
     });
+    update();
 
     function update() {
         let output = document.querySelector(".output .virtual-iframe").contentWindow.document;
@@ -54,6 +63,9 @@ window.onload = function () {
         output.open();
         output.write("<style>" + cssEditor.getValue() + "</style>" + htmlEditor.getValue() + "<script>" + jsEditor.getValue() + "</script>");
         output.close();
+        localStorage.setItem("lc-codepen-clone-html", htmlEditor.getValue())
+        localStorage.setItem("lc-codepen-clone-css", cssEditor.getValue())
+        localStorage.setItem("lc-codepen-clone-js", jsEditor.getValue())
     }
 
     window.addEventListener("resize", e => {
